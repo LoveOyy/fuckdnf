@@ -1,0 +1,185 @@
+<head>
+
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/layer/3.0.3/layer.min.js"></script>
+<script src="qq.js"></script>
+<script src="tencent.js"></script>
+<script src="dnf.js"></script>
+<script src="account.js"></script>
+<script src="layui/layui.js"></script>
+<link rel="stylesheet" href="layui/css/layui.css" media="all">
+
+
+<script src="act/act.js"></script>
+<script src="act/act_xinyuezhanchang.js"></script>
+<script src="act/act_xinyuelibao.js"></script>
+<script src="act/act_xinyueyongshizhilu.js"></script>
+</head>
+<body>
+<a class="layui-btn layui-btn-primary " onclick="qqLogin()">添加账号</a>
+<table id="userTable"></table>	
+		
+		
+		
+		
+		
+		
+		
+		
+</body>
+<script type="text/html" id="userTableBtn">
+  <a class="layui-btn layui-btn-primary layui-btn-mini" lay-event="reLogin">重新登录</a>
+  <a class="layui-btn layui-btn-mini" lay-event="selectRole">设置角色</a>
+  <a class="layui-btn layui-btn-danger layui-btn-mini" lay-event="delete">删除</a>
+</script>
+<script>
+layui.use('table', function(){
+	window.table = layui.table;
+	table.on('tool', function(obj){
+		var data = obj.data;
+		
+		switch(obj.event){
+			case "reLogin":
+				data.__proto__ = new QQ;
+				openQQLogin(data);
+				
+			break;
+			case "selectRole":
+				data.__proto__ = new QQ;
+				openRoleSelect(data);
+			
+			break;
+			case "delete":
+			
+				ACCOUNT.Delete(data.qq);
+				loadUserTable();
+			break;
+			default:
+				data.__proto__ = new QQ;
+				act = Act.get(obj.event,data);
+				opengoodTable(act);
+				
+			break;
+		}
+  });
+  loadUserTable();
+  //展示已知数据
+ 
+});
+//
+function loadUserTable(){
+	table.render({
+		elem: '#userTable'
+		,data: ACCOUNT.List()
+		,cols: [[ //标题栏
+		   {field: 'qq', title: '账号', width: 120}
+		  ,{field: 'name', title: '昵称', width: 120}
+		  ,{field: 'areaName', title: '服务器', width: 100}
+		  ,{field: 'roleName', title: '角色', width: 100}
+		  ,{field: 'isLogin', title: '登录成功', width: 100}
+		  ,{field: 'right', width:240, align:'center', toolbar: '#userTableBtn'}
+		].concat(loadActCols())]
+		,skin: 'row' //表格风格
+		,even: true
+	});
+
+}
+function loadActCols(){
+	_cols = [];
+	for(i in Act.map){
+		$("html").append('<script type="text/html" id="'+i+'"><a class="layui-btn layui-btn-primary layui-btn-mini" lay-event="'+i+'">查看<\/a><\/script>');
+		_col = {field: i,title:Act.map[i]().name, width:120, align:'center', toolbar: '#'+i}
+		_cols.push(_col);
+	}
+	return _cols;
+	
+
+}
+</script>
+
+
+
+<script>
+//a.__proto__ = QQ.__proto__
+$.ajaxSettings.async = false;
+window.onload = function(){
+	if(localStorage.userJson == "{}"){
+		qqLogin();
+	}
+}
+/*
+
+*/
+function qqLogin(){
+	var e = new QQ();
+	e.dnf = new DNF(e);
+	openQQLogin(e);
+}
+function openWindow(index,func){
+	window["layui-layer-iframe"+index].callfunc = func;
+	return index; 
+}
+
+	
+	function openQQLogin(e){
+		index = openWindow(layer.open({
+			   type: 2,
+			   title: '用户登录',
+			   maxmin: true,
+			   skin: 'layui-layer-lan',
+			   shadeClose: true,
+			   area : ['420px' , '240px'],
+			   content:'qqLogin.html',
+			   end: function () {
+					
+				}
+		   }),function(param){
+				ACCOUNT.Save(param);
+				loadUserTable();
+		   });
+		   window["layui-layer-iframe"+index].qqObject = e;
+		   
+	}
+	function opengoodTable(e){
+		index = openWindow(layer.open({
+			   type: 2,
+			   title: '奖励列表',
+			   maxmin: true,
+			   skin: 'layui-layer-lan',
+			   shadeClose: true,
+			   area : ['800px','600px'],
+			   content:'goodTable.html',
+			   end: function () {
+					
+				}
+		   }),function(param){
+				//ACCOUNT.Save(param);
+				//loadUserTable();
+		   });
+		   window["layui-layer-iframe"+index].actObject = e;
+		   
+	}
+	function openRoleSelect(e){
+		index = openWindow(layer.open({
+			   type: 2,
+			   title: '用户登录',
+			   maxmin: true,
+			   skin: 'layui-layer-lan',
+			   shadeClose: true,
+			   area : ['420px' , '480px'],
+			   content:'selectRole.html',
+			   end: function () {
+					
+				}
+		   }),function(param){
+				ACCOUNT.Save(param);
+				loadUserTable();
+				
+		   });
+		   window["layui-layer-iframe"+index].qqObject = e;
+	}
+	
+
+
+
+</script>

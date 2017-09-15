@@ -1,0 +1,68 @@
+	<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+	<script src="layui/layui.js"></script>
+	<script src="tencent.js"></script>
+	<link rel="stylesheet" href="layui/css/layui.css" media="all">
+	<script type="text/html" id="tableBtn">
+		<a class="layui-btn layui-btn-primary layui-btn-mini" lay-event="get">领取</a>
+		
+	</script>
+	<table id="goodTable"></table>	
+	
+		<script>
+			window.onload2 = function(){
+			
+			}
+			window.object = actObject;
+			window.LayerIndex = window.name.substr(18,window.name.length-18);
+			layui.use('table', function(){
+				window.table = layui.table;
+				object.bindArea(object.QQ.areaId,object.QQ.roleId,object.QQ.areaName,object.QQ.roleName); //绑定大区角色; 
+				
+				table.on('tool', function(obj){
+					var data = obj.data;
+					
+					switch(obj.event){
+						case "get":
+							
+							re = object.getGood(obj.data);
+							if(re[0]){
+								layer.msg("领取成功！"+"获得"+"["+re[1]+"]")
+							}else{
+								layer.msg("领取失败！"+"原因"+"["+re[1]+"]")
+							}
+						break;
+						default:
+						break;
+					}
+			  });
+			
+			
+			  loadTable(JSON.parse(JSON.stringify(object.getRule()))); //What the fuck LayUi!
+			
+			 
+			});
+			function loadTable(data){
+				console.log("111")
+				console.log(data);
+				table.render({
+					elem: '#goodTable'
+					,data: data
+					,cols: [[ //标题栏
+					   {field: 'rule_name', title: '条件', width: 300}
+					  ,{field: 'good_name', title: '奖励', width: 200}
+					  ,{field: 'type', title: '完成状态', width: 80}
+					  ,{field: 'id', title: '活动流程编号', width: 100}
+					  ,{field: 'right',title:"操作", width:80, align:'center', toolbar: '#tableBtn'}
+					]]
+					,skin: 'row' //表格风格
+					,even: true
+				});
+
+			}
+					
+			function callback(){
+				callfunc(object);
+			}
+		</script>
+	
+	

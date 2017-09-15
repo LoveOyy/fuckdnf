@@ -1,0 +1,100 @@
+	<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+	<script src="layui/layui.js"></script>
+	<script src="dnf.js"></script>
+	<link rel="stylesheet" href="layui/css/layui.css" media="all">
+	
+	<div class="layui-form layui-form-pane roleWindow" style="padding:18px">  
+			    <div class="layui-form-item">
+					<label class="layui-form-label">角色选择</label>
+					<div class="layui-input-inline">
+					  <select name="area1" id="area1" onchange="loadArea2()" lay-filter="area1">
+					 </select>
+					</div>
+					<div class="layui-input-inline">
+					  <select name="area2" id="area2"  lay-filter="area2">
+					
+						
+					  </select>
+					</div>
+					<div class="layui-input-inline">
+					  <select name="role"  id="role" lay-filter="role">
+						
+					  </select>
+					</div>
+					
+			</div>
+		
+			<div class="layui-form-item" style="text-align:center">
+				<button class="layui-btn" lay-submit lay-filter="ok">确定</button>
+			</div>
+		</div> 
+		
+			
+		</div> 
+		<script>
+			window.object = qqObject;
+			window.object.dnf = new DNF(window.object);
+			window.onload2 = function(){
+				map = object.dnf.LoadAreaMap1();
+				
+				for(i in map){
+					$("#area1").append('<option value="'+i+'">'+map[i]+'</option>');
+				}
+				
+				area2($("#area1").val());
+				form.render();
+			}
+			function area2(i){
+				map = object.dnf.LoadAreaMap2(i);
+				$("#area2").html("")
+				for(i in map){
+					$("#area2").append('<option value="'+i+'">'+map[i]+'</option>');
+				}
+				role($("#area2").val());
+				form.render();
+			}
+			function role(id){
+				$("#role").html("")
+				map = object.dnf.QueryRole(id);
+				for(i in map){
+					$("#role").append('<option value="'+i+'">'+map[i]+'</option>');
+				}
+				form.render();
+			}
+			
+		
+			window.LayerIndex = window.name.substr(18,window.name.length-18);
+			layui.use('form', function(){
+				window.form = layui.form;
+				
+				form.on('submit(ok)', function(data){
+				
+					top.layer.close(LayerIndex);
+					return false;
+				});
+				form.on('select(area1)', function(data){
+					area2(data.value);
+				});
+				form.on('select(area2)', function(data){
+					role(data.value);
+				});
+				form.on('select(role)', function(data){
+					
+					object.areaName = $("#area2").find("option:selected").text();
+					object.areaId = $("#area2").val();
+					object.roleName = $("#role").find("option:selected").text();
+					object.roleId = $("#role").val();
+					callback(object);
+					
+				});
+				window.onload2();
+					
+			
+			});
+			
+			function callback(param){
+				callfunc(param);
+			}
+		</script>
+	
+	
